@@ -28,15 +28,15 @@ THE SOFTWARE. */
 
 
 
-using namespace aika::timer;
+using namespace aika;
 
 
 
-aika::IntrusiveSingleton<Lib>::T_Instance Lib::instance;
+utki::IntrusiveSingleton<Lib>::T_Instance Lib::instance;
 
 
 
-bool Lib::TimerThread::RemoveTimer_ts(Timer* timer)noexcept{
+bool Lib::TimerThread::removeTimer_ts(Timer* timer)noexcept{
 	ASSERT(timer)
 	std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
@@ -55,7 +55,7 @@ bool Lib::TimerThread::RemoveTimer_ts(Timer* timer)noexcept{
 
 	//if that was the first timer, signal the semaphore about timer deletion in order to recalculate the waiting time
 	if(this->timers.begin() == timer->i){
-		this->sema.Signal();
+		this->sema.signal();
 	}
 
 	this->timers.erase(timer->i);
@@ -66,17 +66,17 @@ bool Lib::TimerThread::RemoveTimer_ts(Timer* timer)noexcept{
 
 
 
-void Lib::TimerThread::AddTimer_ts(Timer* timer, std::uint32_t timeout){
+void Lib::TimerThread::addTimer_ts(Timer* timer, std::uint32_t timeout){
 	ASSERT(timer)
 	std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
 	if(timer->isRunning){
-		throw aika::Exc("Lib::TimerThread::AddTimer(): timer is already running!");
+		throw utki::Exc("Lib::TimerThread::AddTimer(): timer is already running!");
 	}
 
 	timer->isRunning = true;
 
-	std::uint64_t stopTicks = this->GetTicks() + std::uint64_t(timeout);
+	std::uint64_t stopTicks = this->getTicks() + std::uint64_t(timeout);
 
 	timer->i = this->timers.insert(
 			std::pair<std::uint64_t, Timer*>(stopTicks, timer)
@@ -86,15 +86,13 @@ void Lib::TimerThread::AddTimer_ts(Timer* timer, std::uint32_t timeout){
 	ASSERT(timer->i->second)
 
 	//signal the semaphore about new timer addition in order to recalculate the waiting time
-	this->sema.Signal();
+	this->sema.signal();
 }
 
 
 
 //override
-void Lib::TimerThread::Run(){
-	M_TIMER_TRACE(<< "Lib::TimerThread::Run(): enter" << std::endl)
-
+void Lib::TimerThread::run(){
 	while(!this->quitFlag){
 		std::uint32_t millis;
 
@@ -104,7 +102,7 @@ void Lib::TimerThread::Run(){
 			{
 				std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
-				std::uint64_t ticks = this->GetTicks();
+				std::uint64_t ticks = this->getTicks();
 
 				for(Timer::T_TimerIter b = this->timers.begin(); b != this->timers.end(); b = this->timers.begin()){
 					if(b->first > ticks){
@@ -132,7 +130,7 @@ void Lib::TimerThread::Run(){
 					millis = std::uint32_t(this->timers.begin()->first - ticks);
 
 					//zero out the semaphore for optimization purposes
-					while(this->sema.Wait(0)){}
+					while(this->sema.wait(0)){}
 
 					break;//~while(true)
 				}
@@ -144,7 +142,7 @@ void Lib::TimerThread::Run(){
 				//emit expired signal for expired timers
 				for(std::vector<Timer*>::iterator i = expiredTimers.begin(); i != expiredTimers.end(); ++i){
 					ASSERT(*i)
-					(*i)->OnExpired();
+					(*i)->onExpired();
 				}
 			}catch(...){
 				//no exceptions should be thrown by this code. Especially we don't want them here because
@@ -155,8 +153,6 @@ void Lib::TimerThread::Run(){
 			this->expiredTimersNotifyMutex.unlock();
 		}
 
-		this->sema.Wait(millis);
+		this->sema.wait(millis);
 	}//~while(!this->quitFlag)
-
-	M_TIMER_TRACE(<< "Lib::TimerThread::Run(): exit" << std::endl)
 }//~Run()

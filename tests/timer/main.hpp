@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../src/ting/debug.hpp"
-#include "../../src/ting/timer.hpp"
+#include <utki/debug.hpp>
+#include "../../src/aika/timer.hpp"
 
 #include "tests.hpp"
 
 
 inline void TestTingTimer(){
-	ting::timer::Lib timerLib;
+	aika::Lib timerLib;
 
 	BasicTimerTest::Run();
 	SeveralTimersForTheSameInterval::Run();

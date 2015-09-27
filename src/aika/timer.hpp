@@ -16,9 +16,10 @@
 #include <utki/Singleton.hpp>
 //#include "math.hpp"
 
-#include "mt/Thread.hpp"
-#include "mt/Semaphore.hpp"
+#include <nitki/Thread.hpp>
+#include <nitki/Semaphore.hpp>
 
+#include "tick.hpp"
 
 
 namespace aika{
@@ -67,13 +68,13 @@ public:
 	 * quick initiation of the action which should be taken on timer expiration,
 	 * for example, post a message to the message queue of another thread to be handled by that another thread.
 	 */
-	virtual void OnExpired()noexcept = 0;
+	virtual void onExpired()noexcept = 0;
 
 	/**
 	 * @brief Constructor for new Timer instance.
 	 * The newly created timer is initially not running.
 	 */
-	inline Timer(){
+	Timer(){
 		ASSERT(!this->isRunning)
 	}
 
@@ -90,7 +91,7 @@ public:
 	 * This method is thread-safe.
 	 * @param millisec - timer timeout in milliseconds.
 	 */
-	inline void Start(std::uint32_t millisec);
+	void start(std::uint32_t millisec);
 
 	/**
 	 * @brief Stop the timer.
@@ -105,7 +106,7 @@ public:
 	 * @return false if timer was not running already when the Stop() method was called. I.e.
 	 *         the timer has expired already or was not started.
 	 */
-	inline bool Stop()noexcept;
+	bool stop()noexcept;
 };
 
 
@@ -117,18 +118,18 @@ public:
  * the timer library, this is done just by creating the singleton object of
  * the timer library class.
  */
-class Lib : public IntrusiveSingleton<Lib>{
-	friend class IntrusiveSingleton<Lib>;
-	static IntrusiveSingleton<Lib>::T_Instance instance;
+class Lib : public utki::IntrusiveSingleton<Lib>{
+	friend class utki::IntrusiveSingleton<Lib>;
+	static utki::IntrusiveSingleton<Lib>::T_Instance instance;
 	
-	friend class aika::timer::Timer;
+	friend class aika::Timer;
 
-	class TimerThread : public aika::mt::Thread{
+	class TimerThread : public nitki::Thread{
 	public:
 		volatile bool quitFlag = false;
 
 		std::mutex mutex;
-		aika::mt::Semaphore sema;
+		nitki::Semaphore sema;
 
 		//mutex used to make sure that after Timer::Stop() method is called the
 		//expired notification callback will not be called
@@ -147,7 +148,7 @@ class Lib : public IntrusiveSingleton<Lib>{
 		//in order to function properly.
 		//This is achieved by having a repeating timer set to 16 days, which will do nothing but
 		//calling this function.
-		inline std::uint64_t GetTicks();
+		std::uint64_t getTicks();
 
 
 
@@ -160,26 +161,25 @@ class Lib : public IntrusiveSingleton<Lib>{
 			ASSERT(this->timers.size() == 0)
 		}
 
-		void AddTimer_ts(Timer* timer, std::uint32_t timeout);
+		void addTimer_ts(Timer* timer, std::uint32_t timeout);
 
-		bool RemoveTimer_ts(Timer* timer)noexcept;
+		bool removeTimer_ts(Timer* timer)noexcept;
 
-		inline void SetQuitFlagAndSignalSemaphore()noexcept{
+		void setQuitFlagAndSignalSemaphore()noexcept{
 			this->quitFlag = true;
-			this->sema.Signal();
+			this->sema.signal();
 		}
 
-		//override
-		void Run();
+		void run()override;
 
 	} thread;
 
 	class HalfMaxTicksTimer : public Timer{
 	public:
 		//override
-		void OnExpired()noexcept{
+		void onExpired()noexcept{
 			try{
-				this->Start(Timer::DMaxTicks() / 2);
+				this->start(Timer::DMaxTicks() / 2);
 			}catch(...){
 				ASSERT(false)
 			}
@@ -188,10 +188,10 @@ class Lib : public IntrusiveSingleton<Lib>{
 
 public:
 	Lib(){
-		this->thread.Start();
+		this->thread.start();
 
 		//start timer for half of the max ticks
-		this->halfMaxTicksTimer.OnExpired();
+		this->halfMaxTicksTimer.onExpired();
 	}
 
 	/**
@@ -201,8 +201,8 @@ public:
 	 */
 	~Lib()noexcept{
 		//stop half max ticks timer
-		while(!this->halfMaxTicksTimer.Stop()){
-			aika::mt::Thread::Sleep(10);
+		while(!this->halfMaxTicksTimer.stop()){
+			nitki::Thread::sleep(10);
 		}
 #ifdef DEBUG
 		{
@@ -210,8 +210,8 @@ public:
 			ASSERT(this->thread.timers.size() == 0)
 		}
 #endif
-		this->thread.SetQuitFlagAndSignalSemaphore();
-		this->thread.Join();
+		this->thread.setQuitFlagAndSignalSemaphore();
+		this->thread.join();
 	}
 };
 
@@ -223,23 +223,23 @@ inline Timer::~Timer()noexcept{
 
 
 
-inline void Timer::Start(std::uint32_t millisec){
-	ASSERT_INFO(Lib::IsCreated(), "Timer library is not initialized, you need to create TimerLib singletone object first")
+inline void Timer::start(std::uint32_t millisec){
+	ASSERT_INFO(Lib::isCreated(), "Timer library is not initialized, you need to create TimerLib singletone object first")
 
-	Lib::Inst().thread.AddTimer_ts(this, millisec);
+	Lib::inst().thread.addTimer_ts(this, millisec);
 }
 
 
 
-inline bool Timer::Stop()noexcept{
-	ASSERT(Lib::IsCreated())
-	return Lib::Inst().thread.RemoveTimer_ts(this);
+inline bool Timer::stop()noexcept{
+	ASSERT(Lib::isCreated())
+	return Lib::inst().thread.removeTimer_ts(this);
 }
 
 
 
-inline std::uint64_t Lib::TimerThread::GetTicks(){
-	std::uint32_t ticks = aika::timer::GetTicks() % Timer::DMaxTicks();
+inline std::uint64_t Lib::TimerThread::getTicks(){
+	std::uint32_t ticks = aika::getTicks() % Timer::DMaxTicks();
 
 	if(this->incTicks){
 		if(ticks < Timer::DMaxTicks() / 2){

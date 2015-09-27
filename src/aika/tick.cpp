@@ -22,11 +22,9 @@
 #endif
 
 
-using namespace aika;
 
 
-
-std::uint32_t getTicks(){
+std::uint32_t aika::getTicks(){
 #if M_OS == M_OS_WINDOWS
 	static LARGE_INTEGER perfCounterFreq = {{0, 0}};
 	if(perfCounterFreq.QuadPart == 0){

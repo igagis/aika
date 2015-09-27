@@ -1,7 +1,7 @@
 #include <vector>
 
-#include "../../src/ting/debug.hpp"
-#include "../../src/ting/timer.hpp"
+#include <utki/debug.hpp>
+#include "../../src/aika/timer.hpp"
 
 #include "tests.hpp"
 
@@ -9,15 +9,14 @@
 
 namespace BasicTimerTest{
 
-struct TestTimer1 : public ting::timer::Timer{
+struct TestTimer1 : public aika::Timer{
 	volatile bool *e;
 
 	TestTimer1(volatile bool* exitFlag) :
 			e(exitFlag)
 	{}
 
-	//override
-	void OnExpired()noexcept{
+	void onExpired()noexcept override{
 		TRACE_ALWAYS(<< "\t- timer1 fired!" << std::endl)
 		*this->e = true;
 	}
@@ -25,14 +24,13 @@ struct TestTimer1 : public ting::timer::Timer{
 
 
 
-struct TestTimer2 : public ting::timer::Timer{
+struct TestTimer2 : public aika::Timer{
 	TestTimer2(){}
 
-	//override
-	void OnExpired()noexcept{
+	void onExpired()noexcept override{
 		TRACE_ALWAYS(<< "\t- timer2 fired!" << std::endl)
 
-		this->Start(2500);
+		this->start(2500);
 	}
 };
 
@@ -47,20 +45,20 @@ void Run(){
 	TestTimer1 timer1(&exit);
 	TestTimer2 timer2;
 
-	timer1.Start(5000);
-	timer2.Start(2500);
+	timer1.start(5000);
+	timer2.start(2500);
 
 //	TRACE_ALWAYS(<< "loop " << std::endl)
 	
 	for(unsigned i = 0; !exit; ++i){
-		ting::mt::Thread::Sleep(100);
+		nitki::Thread::sleep(100);
 		ASSERT_ALWAYS(i != 60)
 	}
 
-	ting::mt::Thread::Sleep(50);
+	nitki::Thread::sleep(50);
 	
-	while(!timer2.Stop()){
-		ting::mt::Thread::Sleep(50);
+	while(!timer2.stop()){
+		nitki::Thread::sleep(50);
 	}
 }
 
@@ -70,7 +68,7 @@ void Run(){
 
 namespace SeveralTimersForTheSameInterval{
 
-struct TestTimer : public ting::timer::Timer{
+struct TestTimer : public aika::Timer{
 	unsigned *e;
 	std::mutex* m;
 
@@ -82,8 +80,7 @@ struct TestTimer : public ting::timer::Timer{
 		ASSERT_ALWAYS(this->e)
 	}
 
-	//override
-	void OnExpired()noexcept{
+	void onExpired()noexcept override{
 //		TRACE_ALWAYS(<<"\t- timer fired!"<<std::endl)
 		std::lock_guard<decltype(*this->m)> mutexGuard(*this->m);
 		++(*this->e);
@@ -111,10 +108,10 @@ void Run(){
 	}
 	
 	for(T_TimerIter i = timers.begin(); i != timers.end(); ++i){
-		(*i)->Start(500);
+		(*i)->start(500);
 	}
 	
-	ting::mt::Thread::Sleep(1000);
+	nitki::Thread::sleep(1000);
 	
 	ASSERT_ALWAYS(counter == DNumTimers)
 }
@@ -125,15 +122,14 @@ void Run(){
 
 namespace StoppingTimers{
 
-struct TestTimer : public ting::timer::Timer{
+struct TestTimer : public aika::Timer{
 	bool *e;
 
 	TestTimer(bool* exitFlag) :
 			e(exitFlag)
 	{}
 
-	//override
-	void OnExpired()noexcept{
+	void onExpired()noexcept override{
 //		TRACE_ALWAYS(<<"\t- timer1 fired!"<<std::endl)
 		*this->e = true;
 	}
@@ -151,30 +147,30 @@ void Run(){
 	TestTimer timer1(&exit1);
 	TestTimer timer2(&exit2);
 	
-	timer1.Start(3000);
+	timer1.start(3000);
 	ASSERT_ALWAYS(!exit1)
 	ASSERT_ALWAYS(!exit2)
 	
-	ting::mt::Thread::Sleep(1000);
+	nitki::Thread::sleep(1000);
 	ASSERT_ALWAYS(!exit1)
 	ASSERT_ALWAYS(!exit2)
 	
-	timer2.Start(1000);
+	timer2.start(1000);
 	
-	ting::mt::Thread::Sleep(500);
+	nitki::Thread::sleep(500);
 	ASSERT_ALWAYS(!exit1)
 	ASSERT_ALWAYS(!exit2)
 	
-	bool stopRes = timer2.Stop();
+	bool stopRes = timer2.stop();
 	ASSERT_ALWAYS(stopRes)
 	ASSERT_ALWAYS(!exit1)
 	ASSERT_ALWAYS(!exit2)
 	
-	ting::mt::Thread::Sleep(1000);
+	nitki::Thread::sleep(1000);
 	ASSERT_ALWAYS(!exit1)
 	ASSERT_ALWAYS(!exit2)
 	
-	ting::mt::Thread::Sleep(1000);
+	nitki::Thread::sleep(1000);
 	ASSERT_ALWAYS(exit1)
 	ASSERT_ALWAYS(!exit2)
 }

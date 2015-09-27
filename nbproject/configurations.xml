@@ -4,11 +4,14 @@
     <df root="src" name="0">
       <df name="aika">
         <in>tick.cpp</in>
-        <in>tick.hpp</in>
         <in>timer.cpp</in>
       </df>
     </df>
     <df root="tests" name="1">
+      <df name="timer">
+        <in>main.cpp</in>
+        <in>tests.cpp</in>
+      </df>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -33,6 +36,7 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0" commonFlags="-funsigned-char -std=c++11 -fPIC"/>
+        <element flagsID="1" commonFlags="-std=c++11"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -53,12 +57,25 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
-      <item path="src/aika/tick.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/aika/tick.hpp" ex="false" tool="3" flavor2="0">
+      <folder path="1">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <item path="src/aika/tick.cpp" ex="false" tool="1" flavor2="4">
       </item>
       <item path="src/aika/timer.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="tests/timer/main.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+        </ccTool>
+      </item>
+      <item path="tests/timer/tests.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
         </ccTool>
       </item>
     </conf>
