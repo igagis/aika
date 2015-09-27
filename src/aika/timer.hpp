@@ -7,90 +7,21 @@
 
 #pragma once
 
-//#define M_ENABLE_TIMER_TRACE
-#ifdef M_ENABLE_TIMER_TRACE
-#	define M_TIMER_TRACE(x) TRACE(<< "[Timer]" x)
-#else
-#	define M_TIMER_TRACE(x)
-#endif
-
-
-#include <utki/config.hpp>
-
-
-#if M_COMPILER == M_COMPILER_MSVC
-#	pragma warning(disable:4290) //WARNING: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#endif
-
-
-#if M_OS == M_OS_WINDOWS
-#	include "windows.hpp"
-
-#elif M_OS == M_OS_MACOSX
-#	include<sys/time.h>
-
-#elif M_OS == M_OS_LINUX
-#include <ctime>
-
-#else
-#	error "Unknown OS"
-#endif
-
 
 #include <vector>
 #include <map>
 #include <algorithm>
 
-#include "debug.hpp"
-#include "types.hpp"
-#include "Singleton.hpp"
-#include "math.hpp"
+#include <utki/debug.hpp>
+#include <utki/Singleton.hpp>
+//#include "math.hpp"
 
 #include "mt/Thread.hpp"
 #include "mt/Semaphore.hpp"
 
 
 
-namespace ting{
-namespace timer{
-
-
-/**
- * @brief Get constantly increasing millisecond ticks.
- * It is not guaranteed that the ticks counting started at the system start.
- * @return constantly increasing millisecond ticks.
- */
-inline std::uint32_t GetTicks(){
-#if M_OS == M_OS_WINDOWS
-	static LARGE_INTEGER perfCounterFreq = {{0, 0}};
-	if(perfCounterFreq.QuadPart == 0){
-		if(QueryPerformanceFrequency(&perfCounterFreq) == FALSE){
-			//looks like the system does not support high resolution tick counter
-			return GetTickCount();
-		}
-	}
-	LARGE_INTEGER ticks;
-	if(QueryPerformanceCounter(&ticks) == FALSE){
-		return GetTickCount();
-	}
-
-	return std::uint32_t((ticks.QuadPart * 1000) / perfCounterFreq.QuadPart);
-#elif M_OS == M_OS_MACOSX
-	//Mac os X doesn't support clock_gettime
-	timeval t;
-	gettimeofday(&t, 0);
-	return std::uint32_t(t.tv_sec * 1000 + (t.tv_usec / 1000));
-#elif M_OS == M_OS_LINUX
-	timespec ts;
-	if(clock_gettime(CLOCK_MONOTONIC, &ts) == -1){
-		throw ting::Exc("GetTicks(): clock_gettime() returned error");
-	}
-
-	return std::uint32_t(std::uint32_t(ts.tv_sec) * 1000 + std::uint32_t(ts.tv_nsec / 1000000));
-#else
-#	error "Unsupported OS"
-#endif
-}
+namespace aika{
 
 
 
@@ -190,14 +121,14 @@ class Lib : public IntrusiveSingleton<Lib>{
 	friend class IntrusiveSingleton<Lib>;
 	static IntrusiveSingleton<Lib>::T_Instance instance;
 	
-	friend class ting::timer::Timer;
+	friend class aika::timer::Timer;
 
-	class TimerThread : public ting::mt::Thread{
+	class TimerThread : public aika::mt::Thread{
 	public:
 		volatile bool quitFlag = false;
 
 		std::mutex mutex;
-		ting::mt::Semaphore sema;
+		aika::mt::Semaphore sema;
 
 		//mutex used to make sure that after Timer::Stop() method is called the
 		//expired notification callback will not be called
@@ -256,7 +187,7 @@ class Lib : public IntrusiveSingleton<Lib>{
 	} halfMaxTicksTimer;
 
 public:
-	inline Lib(){
+	Lib(){
 		this->thread.Start();
 
 		//start timer for half of the max ticks
@@ -271,7 +202,7 @@ public:
 	~Lib()noexcept{
 		//stop half max ticks timer
 		while(!this->halfMaxTicksTimer.Stop()){
-			ting::mt::Thread::Sleep(10);
+			aika::mt::Thread::Sleep(10);
 		}
 #ifdef DEBUG
 		{
@@ -308,7 +239,7 @@ inline bool Timer::Stop()noexcept{
 
 
 inline std::uint64_t Lib::TimerThread::GetTicks(){
-	std::uint32_t ticks = ting::timer::GetTicks() % Timer::DMaxTicks();
+	std::uint32_t ticks = aika::timer::GetTicks() % Timer::DMaxTicks();
 
 	if(this->incTicks){
 		if(ticks < Timer::DMaxTicks() / 2){
@@ -326,5 +257,4 @@ inline std::uint64_t Lib::TimerThread::GetTicks(){
 
 
 
-}//~namespace
 }//~namespace

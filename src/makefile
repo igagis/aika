@@ -11,6 +11,7 @@ this_soname := $(shell cat $(prorab_this_dir)soname.txt)
 
 #Sources
 this_srcs :=
+this_srcs += aika/tick.cpp
 this_srcs += aika/timer.cpp
 
 

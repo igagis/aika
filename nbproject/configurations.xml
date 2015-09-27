@@ -3,6 +3,8 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="src" name="0">
       <df name="aika">
+        <in>tick.cpp</in>
+        <in>tick.hpp</in>
         <in>timer.cpp</in>
       </df>
     </df>
@@ -51,6 +53,10 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="src/aika/tick.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/aika/tick.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/aika/timer.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
         </ccTool>

@@ -28,11 +28,11 @@ THE SOFTWARE. */
 
 
 
-using namespace ting::timer;
+using namespace aika::timer;
 
 
 
-ting::IntrusiveSingleton<Lib>::T_Instance Lib::instance;
+aika::IntrusiveSingleton<Lib>::T_Instance Lib::instance;
 
 
 
@@ -71,7 +71,7 @@ void Lib::TimerThread::AddTimer_ts(Timer* timer, std::uint32_t timeout){
 	std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
 	if(timer->isRunning){
-		throw ting::Exc("Lib::TimerThread::AddTimer(): timer is already running!");
+		throw aika::Exc("Lib::TimerThread::AddTimer(): timer is already running!");
 	}
 
 	timer->isRunning = true;
