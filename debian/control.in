@@ -1,0 +1,35 @@
+Source: libaika
+Section: misc
+Priority: extra
+Maintainer: Ivan Gagis <igagis@gmail.com>
+Build-Depends: debhelper (>= 9), libc6-dev, prorab
+Build-Depends-Indep: doxygen
+Standards-Version: 3.9.2
+
+Package: libaika$(soname)
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: cross-platform C++ time library.
+ Time abstraction library.
+
+Package: libaika$(soname)-dbg
+Section: libdevel
+Architecture: any
+Depends: libaika$(soname) (= ${binary:Version}), ${misc:Depends}
+Description: debugging symbols for libaika$(soname) package.
+
+Package: libaika-dev
+Section: devel
+Architecture: all
+Depends: libaika$(soname) (= ${binary:Version}), ${misc:Depends}
+Suggests: libaika$(soname)-dbg (= ${binary:Version}), libaika-doc
+Description: cross-platform C++ time library.
+ Time abstraction library.
+
+Package: libaika-doc
+Section: devel
+Architecture: all
+Depends: ${misc:Depends}
+Description: documentation for libaika - time abstraction library.
+ For more details see description to libaika-dev package.

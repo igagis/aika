@@ -1,0 +1,1 @@
+This is a dummy file for NuGet to keep the 'aika' directory in the package
