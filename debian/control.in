@@ -2,7 +2,8 @@ Source: libaika
 Section: misc
 Priority: extra
 Maintainer: Ivan Gagis <igagis@gmail.com>
-Build-Depends: debhelper (>= 9), libc6-dev, prorab, libutki-dev, libnitki-dev, libpogodi-dev
+Build-Depends: debhelper (>= 9), prorab,
+		libc6-dev, libutki-dev, libnitki-dev, libpogodi-dev
 Build-Depends-Indep: doxygen
 Standards-Version: 3.9.2
 
