@@ -22,8 +22,9 @@ Description: debugging symbols for libaika$(soname) package.
 Package: libaika-dev
 Section: devel
 Architecture: all
-Depends: libutki-dev, libnitki-dev, libpogodi-dev, libaika$(soname) (= ${binary:Version}), ${misc:Depends}
-Suggests: libaika$(soname)-dbg (= ${binary:Version}), libaika-doc
+Depends: libaika$(soname) (= ${binary:Version}), libaika$(soname)-dbg (= ${binary:Version}), ${misc:Depends},
+		libutki-dev, libnitki-dev, libpogodi-dev
+Suggests: libaika-doc
 Description: cross-platform C++ time library.
  Time abstraction library.
 
