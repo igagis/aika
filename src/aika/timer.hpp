@@ -14,7 +14,7 @@
 
 #include <utki/debug.hpp>
 #include <utki/Singleton.hpp>
-//#include "math.hpp"
+#include <utki/config.hpp>
 
 #include <nitki/Thread.hpp>
 #include <nitki/Semaphore.hpp>
@@ -33,7 +33,7 @@ namespace aika{
  * Before using the timers it is necessary to initialize the timer library, see
  * description of ting::TimerLib class for details.
  */
-class Timer{
+class DLLEXPORT Timer{
 	friend class Lib;
 
 	//This constant is for testing purposes.
@@ -118,7 +118,7 @@ public:
  * the timer library, this is done just by creating the singleton object of
  * the timer library class.
  */
-class Lib : public utki::IntrusiveSingleton<Lib>{
+class DLLEXPORT Lib : public utki::IntrusiveSingleton<Lib>{
 	friend class utki::IntrusiveSingleton<Lib>;
 	static utki::IntrusiveSingleton<Lib>::T_Instance instance;
 	

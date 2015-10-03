@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include <utki/config.hpp>
+
 namespace aika{
 
 
@@ -10,7 +12,7 @@ namespace aika{
  * It is not guaranteed that the ticks counting started at the system start.
  * @return constantly increasing millisecond ticks.
  */
-std::uint32_t getTicks();
+DLLEXPORT std::uint32_t getTicks();
 
 	
 }
