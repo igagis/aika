@@ -33,7 +33,7 @@ namespace aika{
  * Before using the timers it is necessary to initialize the timer library, see
  * description of ting::TimerLib class for details.
  */
-class DLLEXPORT Timer{
+class Timer{
 	friend class Lib;
 
 	//This constant is for testing purposes.
@@ -118,7 +118,7 @@ public:
  * the timer library, this is done just by creating the singleton object of
  * the timer library class.
  */
-class DLLEXPORT Lib : public utki::IntrusiveSingleton<Lib>{
+class Lib : public utki::IntrusiveSingleton<Lib>{
 	friend class utki::IntrusiveSingleton<Lib>;
 	static utki::IntrusiveSingleton<Lib>::T_Instance instance;
 	

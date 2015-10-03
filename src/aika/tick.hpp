@@ -12,7 +12,7 @@ namespace aika{
  * It is not guaranteed that the ticks counting started at the system start.
  * @return constantly increasing millisecond ticks.
  */
-DLLEXPORT std::uint32_t getTicks();
+std::uint32_t getTicks();
 
 	
 }
