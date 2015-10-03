@@ -1,7 +1,7 @@
 nuget{
 	nuspec{
 		id = libaika;
-		version : 1.0.1.2;
+		version : 1.0.1.3;
 		title: C++ time library;
 		authors: {Ivan Gagis};
 		owners: {Ivan Gagis};
@@ -18,9 +18,9 @@ nuget{
 	}
 	dependencies {
 		packages : {
-			libutki/1.0.8.1;
-			libpogodi/1.0.1.4;
-			libnitki/1.0.1.4;
+			libutki/1.0.8.4;
+			libpogodi/1.0.1.8;
+			libnitki/1.0.1.6;
 		};
 	}
 	files {
@@ -28,26 +28,26 @@ nuget{
 		
 		[x86,release] { 
 			lib: msvs_solution\Release\libaika.lib;
-			symbols: msvs_solution\Release\libaika.pdb;
-			bin: msvs_solution\Release\libaika.dll;
+//			symbols: msvs_solution\Release\libaika.pdb;
+//			bin: msvs_solution\Release\libaika.dll;
 		}
 
 		[x86,debug] { 
 			lib: msvs_solution\Debug\libaika.lib;
-			symbols: msvs_solution\Debug\libaika.pdb;
-			bin: msvs_solution\Debug\libaika.dll;
+//			symbols: msvs_solution\Debug\libaika.pdb;
+//			bin: msvs_solution\Debug\libaika.dll;
 		}
 
 		[x64,release] { 
 			lib: msvs_solution\x64\Release\libaika.lib;
-			symbols: msvs_solution\x64\Release\libaika.pdb;
-			bin: msvs_solution\x64\Release\libaika.dll;
+//			symbols: msvs_solution\x64\Release\libaika.pdb;
+//			bin: msvs_solution\x64\Release\libaika.dll;
 		}
 
 		[x64,debug] { 
 			lib: msvs_solution\x64\Debug\libaika.lib;
-			symbols: msvs_solution\x64\Debug\libaika.pdb;
-			bin: msvs_solution\x64\Debug\libaika.dll;
+//			symbols: msvs_solution\x64\Debug\libaika.pdb;
+//			bin: msvs_solution\x64\Debug\libaika.dll;
 		}
 	}
 }

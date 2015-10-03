@@ -65,7 +65,6 @@ void Lib::TimerThread::addTimer_ts(Timer* timer, std::uint32_t timeout){
 
 
 
-//override
 void Lib::TimerThread::run(){
 	while(!this->quitFlag){
 		std::uint32_t millis;
@@ -76,8 +75,13 @@ void Lib::TimerThread::run(){
 			{
 				std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
+				if (this->timers.size() == 0) {
+					return;//half-max-ticks timer was stoopped, means we are exiting.
+				}
+
 				std::uint64_t ticks = this->getTicks();
 
+				ASSERT(this->timers.size() > 0)
 				for(Timer::T_TimerIter b = this->timers.begin(); b != this->timers.end(); b = this->timers.begin()){
 					if(b->first > ticks){
 						break;//~for
@@ -143,14 +147,14 @@ Timer::~Timer()noexcept {
 void Timer::start(std::uint32_t millisec) {
 	ASSERT_INFO(Lib::isCreated(), "Timer library is not initialized, you need to create TimerLib singletone object first")
 
-		Lib::inst().thread.addTimer_ts(this, millisec);
+	Lib::inst().thread.addTimer_ts(this, millisec);
 }
 
 
 
 bool Timer::stop()noexcept {
 	ASSERT(Lib::isCreated())
-		return Lib::inst().thread.removeTimer_ts(this);
+	return Lib::inst().thread.removeTimer_ts(this);
 }
 
 

@@ -176,8 +176,7 @@ class Lib : public utki::IntrusiveSingleton<Lib>{
 
 	class HalfMaxTicksTimer : public Timer{
 	public:
-		//override
-		void onExpired()noexcept{
+		void onExpired()noexcept override{
 			try{
 				this->start(Timer::DMaxTicks() / 2);
 			}catch(...){
@@ -188,10 +187,10 @@ class Lib : public utki::IntrusiveSingleton<Lib>{
 
 public:
 	Lib(){
-		this->thread.start();
-
 		//start timer for half of the max ticks
 		this->halfMaxTicksTimer.onExpired();
+
+		this->thread.start();
 	}
 
 	/**
@@ -200,6 +199,7 @@ public:
 	 * timers should be stopped. Otherwise, in debug mode it will result in assertion failure.
 	 */
 	~Lib()noexcept{
+///		TRACE(<< "~Lib()" << std::endl)
 		//stop half max ticks timer
 		while(!this->halfMaxTicksTimer.stop()){
 			nitki::Thread::sleep(10);
