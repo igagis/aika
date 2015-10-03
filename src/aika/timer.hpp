@@ -217,44 +217,4 @@ public:
 
 
 
-inline Timer::~Timer()noexcept{
-	ASSERT_INFO(!this->isRunning, "trying to destroy running timer. Stop the timer first and make sure its OnExpired() method will not be called, then destroy the timer object.")
-}
-
-
-
-inline void Timer::start(std::uint32_t millisec){
-	ASSERT_INFO(Lib::isCreated(), "Timer library is not initialized, you need to create TimerLib singletone object first")
-
-	Lib::inst().thread.addTimer_ts(this, millisec);
-}
-
-
-
-inline bool Timer::stop()noexcept{
-	ASSERT(Lib::isCreated())
-	return Lib::inst().thread.removeTimer_ts(this);
-}
-
-
-
-inline std::uint64_t Lib::TimerThread::getTicks(){
-	std::uint32_t ticks = aika::getTicks() % Timer::DMaxTicks();
-
-	if(this->incTicks){
-		if(ticks < Timer::DMaxTicks() / 2){
-			this->incTicks = false;
-			this->ticks += (std::uint64_t(Timer::DMaxTicks()) + 1); //update 64 bit ticks counter
-		}
-	}else{
-		if(ticks > Timer::DMaxTicks() / 2){
-			this->incTicks = true;
-		}
-	}
-
-	return this->ticks + std::uint64_t(ticks);
-}
-
-
-
 }//~namespace
