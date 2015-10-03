@@ -1,0 +1,53 @@
+nuget{
+	nuspec{
+		id = libaika;
+		version : 1.0.1.1;
+		title: C++ time library;
+		authors: {Ivan Gagis};
+		owners: {Ivan Gagis};
+		licenseUrl: "https://raw.githubusercontent.com/igagis/aika/master/LICENSE";
+		projectUrl: "https://github.com/igagis/aika";
+		iconUrl: "https://github.com/igagis/aika/blob/master/logo.svg";
+		requireLicenseAcceptance:false;
+		summary: C++ time library;
+
+		description: @"C++ time library";
+		releaseNotes: "Initial release";
+		copyright: Copyright 2015 Ivan Gagis;
+		tags: { native};
+	}
+	dependencies {
+		packages : {
+			libutki/1.0.8.1;
+			libpogodi/1.0.1.4;
+			libnitki/1.0.1.4;
+		};
+	}
+	files {
+		include: { "src\**\*.hpp" };
+		
+		[x86,release] { 
+			lib: msvs_solution\Release\libaika.lib;
+			symbols: msvs_solution\Release\libaika.pdb;
+			bin: msvs_solution\Release\libaika.dll;
+		}
+
+		[x86,debug] { 
+			lib: msvs_solution\Debug\libaika.lib;
+			symbols: msvs_solution\Debug\libaika.pdb;
+			bin: msvs_solution\Debug\libaika.dll;
+		}
+
+		[x64,release] { 
+			lib: msvs_solution\x64\Release\libaika.lib;
+			symbols: msvs_solution\x64\Release\libaika.pdb;
+			bin: msvs_solution\x64\Release\libaika.dll;
+		}
+
+		[x64,debug] { 
+			lib: msvs_solution\x64\Debug\libaika.lib;
+			symbols: msvs_solution\x64\Debug\libaika.pdb;
+			bin: msvs_solution\x64\Debug\libaika.dll;
+		}
+	}
+}
