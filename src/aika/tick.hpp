@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include <utki/config.hpp>
+
 namespace aika{
 
 

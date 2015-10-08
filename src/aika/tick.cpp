@@ -3,13 +3,10 @@
 #include <utki/config.hpp>
 #include <utki/Exc.hpp>
 
-#if M_COMPILER == M_COMPILER_MSVC
-#	pragma warning(disable:4290) //WARNING: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#endif
 
 
 #if M_OS == M_OS_WINDOWS
-#	include "windows.hpp"
+#	include <utki/windows.hpp>
 
 #elif M_OS == M_OS_MACOSX
 #	include<sys/time.h>

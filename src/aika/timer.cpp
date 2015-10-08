@@ -1,29 +1,3 @@
-/* The MIT License:
-
-Copyright (c) 2008-2012 Ivan Gagis <igagis@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE. */
-
-// Home page: http://ting.googlecode.com
-
-
-
 #include "timer.hpp"
 
 
@@ -91,7 +65,6 @@ void Lib::TimerThread::addTimer_ts(Timer* timer, std::uint32_t timeout){
 
 
 
-//override
 void Lib::TimerThread::run(){
 	while(!this->quitFlag){
 		std::uint32_t millis;
@@ -102,8 +75,13 @@ void Lib::TimerThread::run(){
 			{
 				std::lock_guard<decltype(this->mutex)> mutexGuard(this->mutex);
 
+				if (this->timers.size() == 0) {
+					return;//half-max-ticks timer was stoopped, means we are exiting.
+				}
+
 				std::uint64_t ticks = this->getTicks();
 
+				ASSERT(this->timers.size() > 0)
 				for(Timer::T_TimerIter b = this->timers.begin(); b != this->timers.end(); b = this->timers.begin()){
 					if(b->first > ticks){
 						break;//~for
@@ -155,4 +133,46 @@ void Lib::TimerThread::run(){
 
 		this->sema.wait(millis);
 	}//~while(!this->quitFlag)
-}//~Run()
+}
+
+
+
+
+Timer::~Timer()noexcept {
+	ASSERT_INFO(!this->isRunning, "trying to destroy running timer. Stop the timer first and make sure its OnExpired() method will not be called, then destroy the timer object.")
+}
+
+
+
+void Timer::start(std::uint32_t millisec) {
+	ASSERT_INFO(Lib::isCreated(), "Timer library is not initialized, you need to create TimerLib singletone object first")
+
+	Lib::inst().thread.addTimer_ts(this, millisec);
+}
+
+
+
+bool Timer::stop()noexcept {
+	ASSERT(Lib::isCreated())
+	return Lib::inst().thread.removeTimer_ts(this);
+}
+
+
+
+std::uint64_t Lib::TimerThread::getTicks() {
+	std::uint32_t ticks = aika::getTicks() % Timer::DMaxTicks();
+
+	if (this->incTicks) {
+		if (ticks < Timer::DMaxTicks() / 2) {
+			this->incTicks = false;
+			this->ticks += (std::uint64_t(Timer::DMaxTicks()) + 1); //update 64 bit ticks counter
+		}
+	}
+	else {
+		if (ticks > Timer::DMaxTicks() / 2) {
+			this->incTicks = true;
+		}
+	}
+
+	return this->ticks + std::uint64_t(ticks);
+}
