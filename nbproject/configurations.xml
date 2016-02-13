@@ -75,11 +75,12 @@
         </ccTool>
       </item>
       <item path="tests/timer/main.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="1">
-        </ccTool>
       </item>
       <item path="tests/timer/tests.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="1">
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
     </conf>
