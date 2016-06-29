@@ -28,25 +28,25 @@ nuget{
 		
 		[x86,release] { 
 			lib: ..\msvs_solution\Release\libaika.lib;
-//			symbols: ..\msvs_solution\Release\libaika.pdb;
+			symbols: ..\msvs_solution\libaika\Release\libaika.pdb;
 //			bin: ..\msvs_solution\Release\libaika.dll;
 		}
 
 		[x86,debug] { 
 			lib: ..\msvs_solution\Debug\libaika.lib;
-//			symbols: ..\msvs_solution\Debug\libaika.pdb;
+			symbols: ..\msvs_solution\libaika\Debug\libaika.pdb;
 //			bin: ..\msvs_solution\Debug\libaika.dll;
 		}
 
 		[x64,release] { 
 			lib: ..\msvs_solution\x64\Release\libaika.lib;
-//			symbols: ..\msvs_solution\x64\Release\libaika.pdb;
+			symbols: ..\msvs_solution\libaika\x64\Release\libaika.pdb;
 //			bin: ..\msvs_solution\x64\Release\libaika.dll;
 		}
 
 		[x64,debug] { 
 			lib: ..\msvs_solution\x64\Debug\libaika.lib;
-//			symbols: ..\msvs_solution\x64\Debug\libaika.pdb;
+			symbols: ..\msvs_solution\libaika\x64\Debug\libaika.pdb;
 //			bin: ..\msvs_solution\x64\Debug\libaika.dll;
 		}
 	}
