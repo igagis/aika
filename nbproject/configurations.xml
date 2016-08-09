@@ -23,7 +23,7 @@
       <itemPath>nbproject/private/launcher.properties</itemPath>
       <itemPath>cocoapods/libaika.podspec.in</itemPath>
       <itemPath>homebrew/libaika.rb.in</itemPath>
-      <itemPath>src/makefile</itemPath>
+      <itemPath>makefile</itemPath>
       <itemPath>nuget/nuget.autopkg.in</itemPath>
     </logicalFolder>
   </logicalFolder>
