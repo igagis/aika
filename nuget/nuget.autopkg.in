@@ -19,8 +19,8 @@ nuget{
 	dependencies {
 		packages : {
 			libutki/1.0.22;
-			libpogodi/1.0.1.8;
-			libnitki/1.0.1.6;
+			libpogodi/1.0.10;
+			libnitki/1.0.13;
 		};
 	}
 	files {
