@@ -13,12 +13,12 @@ nuget{
 
 		description: @"C++ time library";
 		releaseNotes: "Initial release";
-		copyright: Copyright 2015 Ivan Gagis;
+		copyright: Copyright 2016 Ivan Gagis;
 		tags: { native};
 	}
 	dependencies {
 		packages : {
-			libutki/1.0.8.4;
+			libutki/1.0.22;
 			libpogodi/1.0.1.8;
 			libnitki/1.0.1.6;
 		};
@@ -29,25 +29,21 @@ nuget{
 			#destination = ${d_include}aika;
 			"..\src\aika\**\*.hpp"
 		};
-		
-		[x86,release] { 
+
+		[x86,release] {
 			lib: ..\msvs_solution\Release\libaika.lib;
-			symbols: ..\msvs_solution\libaika\Release\libaika.pdb;
 		}
 
-		[x86,debug] { 
+		[x86,debug] {
 			lib: ..\msvs_solution\Debug\libaika.lib;
-			symbols: ..\msvs_solution\libaika\Debug\libaika.pdb;
 		}
 
-		[x64,release] { 
+		[x64,release] {
 			lib: ..\msvs_solution\x64\Release\libaika.lib;
-			symbols: ..\msvs_solution\libaika\x64\Release\libaika.pdb;
 		}
 
-		[x64,debug] { 
+		[x64,debug] {
 			lib: ..\msvs_solution\x64\Debug\libaika.lib;
-			symbols: ..\msvs_solution\libaika\x64\Debug\libaika.pdb;
 		}
 	}
 }
