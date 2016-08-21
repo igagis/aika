@@ -28,6 +28,8 @@ endif
 
 this_ldflags += -L$(prorab_this_dir)../../src/
 
+this_ldlibs += -lstdc++
+
 #add dependency on libaika.so
 $(abspath $(prorab_this_dir)tests): $(abspath $(prorab_this_dir)../../src/libaika$(prorab_lib_extension))
 
